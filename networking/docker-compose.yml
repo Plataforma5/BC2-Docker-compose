@@ -1,0 +1,36 @@
+version: "3.7"
+x-common-variables: &common-variables
+  NODE_ENV: local
+  DB_MAIN_HOST: db
+  POSTGRES_DB: plataforma5-db
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: example
+services:
+  local:
+    build:
+      context: .
+    volumes:
+      - ./src:/app/src
+    container_name: plataforma5-backend_local
+    environment: *common-variables
+
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    tty: true
+    entrypoint: ["npm", "run", "local"]
+    networks:
+      - db-network
+  db:
+    image: postgres
+    restart: always
+    environment: *common-variables
+    networks:
+      - db-network
+networks:
+  # default:
+  #   name: plataforma5-backend
+  db-network:
+    external: true
